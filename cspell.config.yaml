@@ -1,0 +1,44 @@
+version: "0.2"
+ignorePaths: []
+dictionaryDefinitions: []
+dictionaries: []
+words:
+  - adrg
+  - APIID
+  - ariga
+  - atlasmigrate
+  - atlasschema
+  - celestix
+  - ctid
+  - dbname
+  - entdialog
+  - entgo
+  - entmessage
+  - entsql
+  - errgroup
+  - fxevent
+  - Gigagroup
+  - glebarez
+  - gotd
+  - gotgproto
+  - gotools
+  - mapstructure
+  - Megagroup
+  - nixpkgs
+  - numtide
+  - Ollama
+  - ollamaapi
+  - pgroonga
+  - pgvectors
+  - pkgs
+  - samber
+  - sslmode
+  - tableoid
+  - tdconstant
+  - telemikiya
+  - tgtypes
+  - treefmt
+  - Vcard
+  - xyenon
+ignoreWords: []
+import: []

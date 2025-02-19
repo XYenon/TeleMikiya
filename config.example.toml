@@ -1,0 +1,68 @@
+# Example configuration file for TeleMikiya
+
+[telegram]
+# Telegram API ID (obtain from https://my.telegram.org)
+api_id = 100000
+# Telegram API Hash (obtain from https://my.telegram.org)
+api_hash = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+# Your Telegram account phone number
+phone_number = "+12345678900"
+# Path to user session file
+user_session_file = "user_session.db"
+# List of dialog IDs to observe and index messages from
+# Leave empty to observe all accessible dialogs
+observed_dialog_ids = []
+# Dialog info update interval
+dialog_update_interval = "24h"
+# Telegram Bot Token (obtain from @BotFather)
+bot_token = ""
+# Path to bot session file
+bot_session_file = "bot_session.db"
+# List of Telegram user IDs allowed to use the bot
+bot_allowed_user_ids = [123456789]
+
+[database]
+# PostgreSQL database host
+host = "localhost"
+# PostgreSQL database port
+port = 5432
+# PostgreSQL SSL mode: "disable", "require", "verify-ca", or "verify-full"
+ssl_mode = "disable"
+# Database connection timeout (0 means no limit)
+connect_timeout = 0
+# PostgreSQL database username
+user = "telemikiya"
+# PostgreSQL database password
+password = "telemikiya"
+# PostgreSQL database name
+db_name = "telemikiya"
+
+[embedding]
+# Embedding provider: "ollama" or "openai"
+provider = "ollama"
+# Embedding service API endpoint
+base_url = "http://localhost:11434"
+# Request timeout duration (optional)
+timeout = "30s"
+# Batch size (number of messages to process per batch)
+batch_size = 10
+# Embedding model name
+model = "snowflake-arctic-embed2:568m"
+# Embedding vector dimensions
+dimensions = 1024
+
+# Ollama specific settings
+[embedding.ollama]
+# API connection keep-alive duration (optional)
+keep_alive = "5m"
+# Model parameters (optional)
+model_parameters = {}
+
+# OpenAI specific settings
+[embedding.openai]
+# OpenAI API key
+api_key = ""
+# OpenAI organization ID (optional)
+organization = ""
+# OpenAI project (optional)
+project = ""
