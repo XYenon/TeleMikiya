@@ -33,6 +33,7 @@ type Params struct {
 type Database struct {
 	embeddingDimensions uint
 	allowClearEmbedding bool
+	logger              *zap.Logger
 	*ent.Client
 }
 
@@ -60,6 +61,7 @@ func New(params Params) (*Database, error) {
 	db := &Database{
 		embeddingDimensions: params.Config.Embedding.Dimensions,
 		allowClearEmbedding: params.AllowClearEmbedding,
+		logger:              params.Logger,
 		Client:              entClient,
 	}
 
@@ -103,6 +105,7 @@ func (d *Database) Migrate(ctx context.Context) error {
 					if !d.allowClearEmbedding {
 						return ErrNotAllowedToClearEmbedding
 					}
+					d.logger.Info("embedding dimensions changed, need to clear text embedding")
 					err := d.Message.Update().ClearTextEmbedding().Exec(ctx)
 					if err != nil {
 						return fmt.Errorf("failed to clear text embedding: %w", err)
@@ -145,21 +148,34 @@ func (d *Database) diffEmbeddingDimensions(current, desired *atlasschema.Schema)
 	desiredColType := desiredCol.Type.Type.(*postgres.UserDefinedType)
 	realDesiredColType := fmt.Sprintf(desiredColType.T, d.embeddingDimensions)
 	if currentColType.T != realDesiredColType {
-		changes = []atlasschema.Change{&atlasschema.ModifyTable{
-			T: currentTable,
-			Changes: []atlasschema.Change{
-				&atlasschema.ModifyColumn{
-					From:   currentCol,
-					To:     desiredCol,
-					Change: atlasschema.ChangeType,
-				},
-				&atlasschema.DropIndex{
-					I: &atlasschema.Index{
-						Name: "message_text_embedding",
-					},
-				},
+		d.logger.Info("embedding dimensions changed", zap.String("from", currentColType.T), zap.String("to", realDesiredColType))
+
+		tableChanges := []atlasschema.Change{
+			&atlasschema.ModifyColumn{
+				From:   currentCol,
+				To:     desiredCol,
+				Change: atlasschema.ChangeType,
 			},
-		}}
+		}
+		currentIndex, currentIndexOk := lo.Find(currentTable.Indexes,
+			func(i *atlasschema.Index) bool { return i.Name == "message_text_embedding" },
+		)
+		desiredIndex, desiredIndexOk := lo.Find(desiredTable.Indexes,
+			func(i *atlasschema.Index) bool { return i.Name == "message_text_embedding" },
+		)
+		if currentIndexOk && desiredIndexOk {
+			tableChanges = append(tableChanges,
+				&atlasschema.DropIndex{I: currentIndex},
+				&atlasschema.AddIndex{I: desiredIndex},
+			)
+		}
+
+		changes = []atlasschema.Change{
+			&atlasschema.ModifyTable{
+				T:       currentTable,
+				Changes: tableChanges,
+			},
+		}
 	}
 	return
 }

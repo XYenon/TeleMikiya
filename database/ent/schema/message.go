@@ -42,7 +42,7 @@ func (Message) Indexes() []ent.Index {
 		index.Fields("text_embedding").
 			Annotations(
 				entsql.IndexType("vectors"),
-				entsql.OpClass("vector_cos_ops"),
+				entsql.OpClass("vectors.vector_cos_ops"),
 			),
 		index.Fields("sent_at"),
 	}
