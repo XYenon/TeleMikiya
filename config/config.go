@@ -90,9 +90,6 @@ func New(cfgFile string) (cfg *Config, err error) {
 		v.AddConfigPath("/etc/telemikiya")
 	}
 
-	v.SetEnvPrefix("TELEMIKIYA")
-	v.AutomaticEnv()
-
 	err = v.ReadInConfig()
 	switch err.(type) {
 	case nil, viper.ConfigFileNotFoundError:
@@ -100,6 +97,9 @@ func New(cfgFile string) (cfg *Config, err error) {
 	default:
 		return nil, fmt.Errorf("failed to read config: %w", err)
 	}
+
+	v.SetEnvPrefix("TELEMIKIYA")
+	v.AutomaticEnv()
 
 	if err = v.Unmarshal(&cfg); err != nil {
 		err = fmt.Errorf("failed to unmarshal config: %w", err)
