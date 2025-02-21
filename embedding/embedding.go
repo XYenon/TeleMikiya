@@ -70,7 +70,6 @@ func (e *Embedding) Run() error {
 				err = ctx.Err()
 				return
 			default:
-				time.Sleep(5 * time.Second)
 			}
 
 			messages, err := e.db.Message.Query().
@@ -83,6 +82,10 @@ func (e *Embedding) Run() error {
 				continue
 			}
 			e.logger.Info("fetched messages", zap.Int("count", len(messages)))
+			if len(messages) == 0 {
+				time.Sleep(5 * time.Second)
+				continue
+			}
 
 			messageTexts := lo.Map(messages, func(msg *ent.Message, _ int) string { return msg.Text })
 			embeddings, err := e.embeddingProvider.Embed(ctx, messageTexts)
