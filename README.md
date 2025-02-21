@@ -64,6 +64,10 @@ CREATE DATABASE telemikiya OWNER telemikiya;
 CREATE EXTENSION IF NOT EXISTS vectors;
 CREATE EXTENSION IF NOT EXISTS pgroonga;
 
+-- Create schemas
+CREATE SCHEMA user_session AUTHORIZATION telemikiya;
+CREATE SCHEMA bot_session AUTHORIZATION telemikiya;
+
 -- Grant permissions
 GRANT ALL ON SCHEMA vectors TO telemikiya;
 ```

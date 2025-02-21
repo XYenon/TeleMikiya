@@ -7,8 +7,6 @@ api_id = 100000
 api_hash = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 # Your Telegram account phone number
 phone_number = "+12345678900"
-# Path to user session file
-user_session_file = "user_session.db"
 # List of dialog IDs to observe and index messages from
 # Leave empty to observe all accessible dialogs
 observed_dialog_ids = []
@@ -16,8 +14,6 @@ observed_dialog_ids = []
 dialog_update_interval = "24h"
 # Telegram Bot Token (obtain from @BotFather)
 bot_token = "1234567890:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-# Path to bot session file
-bot_session_file = "bot_session.db"
 # List of Telegram user IDs allowed to use the bot
 bot_allowed_user_ids = [123456789]
 

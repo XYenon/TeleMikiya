@@ -6,13 +6,14 @@ import (
 	"github.com/celestix/gotgproto"
 	"github.com/celestix/gotgproto/dispatcher/handlers"
 	"github.com/celestix/gotgproto/sessionMaker"
-	"github.com/glebarez/sqlite"
 	"github.com/xyenon/telemikiya/config"
+	"github.com/xyenon/telemikiya/database"
 	"github.com/xyenon/telemikiya/searcher"
 	"github.com/xyenon/telemikiya/telegram/bot/search"
 	"github.com/xyenon/telemikiya/types"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
+	"gorm.io/driver/postgres"
 )
 
 type Params struct {
@@ -22,12 +23,14 @@ type Params struct {
 	Config    *config.Config
 	Logger    *zap.Logger
 	Searcher  *searcher.Searcher
+	Database  *database.Database
 }
 
 type Bot struct {
 	cfg      *config.Telegram
 	logger   *zap.Logger
 	searcher *searcher.Searcher
+	db       *database.Database
 
 	tgClient *gotgproto.Client
 }
@@ -37,6 +40,7 @@ func New(params Params) *Bot {
 		cfg:      &params.Config.Telegram,
 		logger:   params.Logger,
 		searcher: params.Searcher,
+		db:       params.Database,
 	}
 
 	if params.LifeCycle != nil {
@@ -62,8 +66,10 @@ func (o *Bot) Run() (err error) {
 		o.cfg.APIHash,
 		gotgproto.ClientTypeBot(o.cfg.BotToken),
 		&gotgproto.ClientOpts{
-			Logger:  o.logger,
-			Session: sessionMaker.SqlSession(sqlite.Open(o.cfg.BotSessionFile)),
+			Logger: o.logger,
+			Session: sessionMaker.SqlSession(
+				postgres.New(postgres.Config{Conn: o.db.BotSessionConn}),
+			),
 			Context: ctx,
 		},
 	); err != nil {

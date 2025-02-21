@@ -25,12 +25,10 @@ type Telegram struct {
 	APIHash string `mapstructure:"api_hash"`
 
 	PhoneNumber          string        `mapstructure:"phone_number"`
-	UserSessionFile      string        `mapstructure:"user_session_file"`
 	ObservedDialogIDs    []int64       `mapstructure:"observed_dialog_ids"`
 	DialogUpdateInterval time.Duration `mapstructure:"dialog_update_interval"`
 
 	BotToken          string  `mapstructure:"bot_token"`
-	BotSessionFile    string  `mapstructure:"bot_session_file"`
 	BotAllowedUserIDs []int64 `mapstructure:"bot_allowed_user_ids"`
 }
 
@@ -83,10 +81,6 @@ func New(cfgFile string) (cfg *Config, err error) {
 	}
 
 	xdgConfigPath := path.Join(xdg.ConfigHome, "telemikiya")
-	xdgStatePath := path.Join(xdg.StateHome, "telemikiya")
-
-	v.SetDefault("telegram.user_session_file", path.Join(xdgStatePath, "user_session.db"))
-	v.SetDefault("telegram.bot_session_file", path.Join(xdgStatePath, "bot_session.db"))
 
 	if lo.IsNotEmpty(cfgFile) {
 		v.SetConfigFile(cfgFile)

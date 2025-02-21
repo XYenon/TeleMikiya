@@ -2,6 +2,8 @@ package database
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 
 	atlasmigrate "ariga.io/atlas/sql/migrate"
@@ -34,12 +36,14 @@ type Database struct {
 	embeddingDimensions uint
 	allowClearEmbedding bool
 	logger              *zap.Logger
+	UserSessionConn     *sql.DB
+	BotSessionConn      *sql.DB
 	*ent.Client
 }
 
 func New(params Params) (*Database, error) {
 	dataSourceName := fmt.Sprintf(
-		"host=%s port=%d sslmode=%s connect_timeout=%d user=%s password='%s' dbname=%s search_path='\"$user\",public,vectors'",
+		"host=%s port=%d sslmode=%s connect_timeout=%d user=%s password='%s' dbname=%s",
 		params.Config.Database.Host,
 		params.Config.Database.Port,
 		params.Config.Database.SSLMode,
@@ -48,12 +52,21 @@ func New(params Params) (*Database, error) {
 		params.Config.Database.Password,
 		params.Config.Database.DBName,
 	)
+
+	userSessionConn, err := sql.Open("postgres", dataSourceName+" search_path='user_session'")
+	if err != nil {
+		return nil, fmt.Errorf("failed to open user session database connection: %w", err)
+	}
+	botSessionConn, err := sql.Open("postgres", dataSourceName+" search_path='bot_session'")
+	if err != nil {
+		return nil, fmt.Errorf("failed to open bot session database connection: %w", err)
+	}
+
 	opts := make([]ent.Option, 0)
 	if params.Debug {
 		opts = append(opts, ent.Debug(), ent.Log(params.Logger.Sugar().Debug))
 	}
-
-	entClient, err := ent.Open("postgres", dataSourceName, opts...)
+	entClient, err := ent.Open("postgres", dataSourceName+" search_path='\"$user\",public,vectors'", opts...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open ent client: %w", err)
 	}
@@ -62,6 +75,8 @@ func New(params Params) (*Database, error) {
 		embeddingDimensions: params.Config.Embedding.Dimensions,
 		allowClearEmbedding: params.AllowClearEmbedding,
 		logger:              params.Logger,
+		UserSessionConn:     userSessionConn,
+		BotSessionConn:      botSessionConn,
 		Client:              entClient,
 	}
 
@@ -77,7 +92,11 @@ func New(params Params) (*Database, error) {
 }
 
 func (d *Database) Close() error {
-	return d.Client.Close()
+	return errors.Join(
+		d.UserSessionConn.Close(),
+		d.BotSessionConn.Close(),
+		d.Client.Close(),
+	)
 }
 
 func (d *Database) Migrate(ctx context.Context) error {

@@ -8,13 +8,13 @@ import (
 	"github.com/celestix/gotgproto/dispatcher/handlers"
 	"github.com/celestix/gotgproto/dispatcher/handlers/filters"
 	"github.com/celestix/gotgproto/sessionMaker"
-	"github.com/glebarez/sqlite"
 	"github.com/xyenon/telemikiya/config"
 	"github.com/xyenon/telemikiya/database"
 	"github.com/xyenon/telemikiya/telegram/observer/record"
 	"github.com/xyenon/telemikiya/types"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
+	"gorm.io/driver/postgres"
 )
 
 type Params struct {
@@ -65,8 +65,10 @@ func (o *Observer) Run() (err error) {
 		o.cfg.APIHash,
 		gotgproto.ClientTypePhone(o.cfg.PhoneNumber),
 		&gotgproto.ClientOpts{
-			Logger:  o.logger,
-			Session: sessionMaker.SqlSession(sqlite.Open(o.cfg.UserSessionFile)),
+			Logger: o.logger,
+			Session: sessionMaker.SqlSession(
+				postgres.New(postgres.Config{Conn: o.db.UserSessionConn}),
+			),
 			Context: ctx,
 		},
 	); err != nil {
