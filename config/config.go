@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/adrg/xdg"
@@ -66,7 +67,9 @@ type OpenAI struct {
 }
 
 func New(cfgFile string) (cfg *Config, err error) {
-	v := viper.New()
+	v := viper.NewWithOptions(
+		viper.EnvKeyReplacer(strings.NewReplacer(".", "_")),
+	)
 
 	xdgConfigPath := path.Join(xdg.ConfigHome, "telemikiya")
 	xdgStatePath := path.Join(xdg.StateHome, "telemikiya")
