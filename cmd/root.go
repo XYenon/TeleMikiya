@@ -47,6 +47,9 @@ func fxOptions() fx.Option {
 		),
 		fx.Provide(fx.Annotate(libs.NewLogger, fx.ParamTags(`name:"debug"`))),
 		fx.Provide(fx.Annotate(config.New, fx.ParamTags(`name:"cfgFile"`))),
+		fx.Invoke(func(logger *zap.Logger, cfg *config.Config) {
+			logger.Debug("config loaded", zap.Reflect("config", cfg))
+		}),
 		fx.Provide(database.New),
 		fx.Provide(provider.New),
 		fx.Provide(searcher.New),
