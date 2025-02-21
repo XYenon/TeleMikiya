@@ -69,10 +69,10 @@ func New(cfgFile string) (cfg *Config, err error) {
 	v := viper.New()
 
 	xdgConfigPath := path.Join(xdg.ConfigHome, "telemikiya")
-	xdgDataPath := path.Join(xdg.DataHome, "telemikiya")
+	xdgStatePath := path.Join(xdg.StateHome, "telemikiya")
 
-	v.SetDefault("telegram.user_session_file", path.Join(xdgDataPath, "user_session.db"))
-	v.SetDefault("telegram.bot_session_file", path.Join(xdgDataPath, "bot_session.db"))
+	v.SetDefault("telegram.user_session_file", path.Join(xdgStatePath, "user_session.db"))
+	v.SetDefault("telegram.bot_session_file", path.Join(xdgStatePath, "bot_session.db"))
 	v.SetDefault("telegram.dialog_update_interval", 24*time.Hour)
 	v.SetDefault("database.db_name", "telemikiya")
 	v.SetDefault("embedding.provider", types.TypeOllama)
