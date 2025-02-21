@@ -15,7 +15,7 @@ observed_dialog_ids = []
 # Dialog info update interval
 dialog_update_interval = "24h"
 # Telegram Bot Token (obtain from @BotFather)
-bot_token = ""
+bot_token = "1234567890:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 # Path to bot session file
 bot_session_file = "bot_session.db"
 # List of Telegram user IDs allowed to use the bot
@@ -28,8 +28,8 @@ host = "localhost"
 port = 5432
 # PostgreSQL SSL mode: "disable", "require", "verify-ca", or "verify-full"
 ssl_mode = "disable"
-# Database connection timeout (0 means no limit)
-connect_timeout = 0
+# Database connection timeout (optional)
+connect_timeout = "1h"
 # PostgreSQL database username
 user = "telemikiya"
 # PostgreSQL database password

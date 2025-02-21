@@ -1,0 +1,34 @@
+[telegram]
+api_id = 0
+api_hash = ""
+phone_number = ""
+observed_dialog_ids = []
+dialog_update_interval = "24h"
+bot_token = ""
+bot_allowed_user_ids = []
+
+[database]
+host = "localhost"
+port = 5432
+ssl_mode = "verify-full"
+connect_timeout = 0
+user = "telemikiya"
+password = ""
+db_name = "telemikiya"
+
+[embedding]
+provider = "ollama"
+base_url = "http://localhost:11434"
+timeout = 0
+batch_size = 10
+model = ""
+dimensions = 0
+
+[embedding.ollama]
+keep_alive = 0
+model_parameters = {}
+
+[embedding.openai]
+api_key = ""
+organization = ""
+project = ""

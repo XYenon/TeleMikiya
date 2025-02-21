@@ -10,6 +10,8 @@ import (
 	"github.com/samber/lo"
 	"github.com/spf13/viper"
 	"github.com/xyenon/telemikiya/types"
+
+	_ "embed"
 )
 
 type Config struct {
@@ -66,21 +68,25 @@ type OpenAI struct {
 	Project      string `mapstructure:"project"`
 }
 
+//go:embed config.default.toml
+var defaultCfg string
+
 func New(cfgFile string) (cfg *Config, err error) {
 	v := viper.NewWithOptions(
 		viper.EnvKeyReplacer(strings.NewReplacer(".", "_")),
 	)
+
+	v.SetConfigType("toml")
+	err = v.ReadConfig(strings.NewReader(defaultCfg))
+	if err != nil {
+		return nil, fmt.Errorf("failed to read default config: %w", err)
+	}
 
 	xdgConfigPath := path.Join(xdg.ConfigHome, "telemikiya")
 	xdgStatePath := path.Join(xdg.StateHome, "telemikiya")
 
 	v.SetDefault("telegram.user_session_file", path.Join(xdgStatePath, "user_session.db"))
 	v.SetDefault("telegram.bot_session_file", path.Join(xdgStatePath, "bot_session.db"))
-	v.SetDefault("telegram.dialog_update_interval", 24*time.Hour)
-	v.SetDefault("database.db_name", "telemikiya")
-	v.SetDefault("embedding.provider", types.TypeOllama)
-	v.SetDefault("embedding.base_url", "http://localhost:11434")
-	v.SetDefault("embedding.batch_size", 10)
 
 	if lo.IsNotEmpty(cfgFile) {
 		v.SetConfigFile(cfgFile)
@@ -90,7 +96,7 @@ func New(cfgFile string) (cfg *Config, err error) {
 		v.AddConfigPath("/etc/telemikiya")
 	}
 
-	err = v.ReadInConfig()
+	err = v.MergeInConfig()
 	switch err.(type) {
 	case nil, viper.ConfigFileNotFoundError:
 		// do nothing
