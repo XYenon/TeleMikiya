@@ -13,7 +13,6 @@ import (
 	"github.com/xyenon/telemikiya/embedding/provider"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
-	"golang.org/x/sync/errgroup"
 )
 
 type Params struct {
@@ -50,6 +49,10 @@ func New(params Params) *Embedding {
 
 	if params.LifeCycle != nil {
 		params.LifeCycle.Append(fx.Hook{
+			OnStart: func(ctx context.Context) error {
+				go embedding.Run()
+				return nil
+			},
 			OnStop: func(ctx context.Context) error {
 				embedding.cancel()
 				return nil
@@ -60,51 +63,44 @@ func New(params Params) *Embedding {
 	return embedding
 }
 
-func (e *Embedding) Run() error {
-	g, ctx := errgroup.WithContext(e.ctx)
+func (e *Embedding) Run() {
+	for {
+		select {
+		case <-e.ctx.Done():
+			return
+		default:
+		}
 
-	g.Go(func() (err error) {
-		for {
-			select {
-			case <-ctx.Done():
-				err = ctx.Err()
-				return
-			default:
-			}
+		messages, err := e.db.Message.Query().
+			Select(entmessage.FieldID, entmessage.FieldText).
+			Where(entmessage.TextEmbeddingIsNil()).
+			Limit(int(e.cfg.BatchSize)).
+			All(e.ctx)
+		if err != nil {
+			e.logger.Error("failed to query messages", zap.Error(err))
+			continue
+		}
+		e.logger.Info("fetched messages", zap.Int("count", len(messages)))
+		if len(messages) == 0 {
+			time.Sleep(5 * time.Second)
+			continue
+		}
 
-			messages, err := e.db.Message.Query().
-				Select(entmessage.FieldID, entmessage.FieldText).
-				Where(entmessage.TextEmbeddingIsNil()).
-				Limit(int(e.cfg.BatchSize)).
-				All(ctx)
+		messageTexts := lo.Map(messages, func(msg *ent.Message, _ int) string { return msg.Text })
+		embeddings, err := e.embeddingProvider.Embed(e.ctx, messageTexts)
+		if err != nil {
+			e.logger.Error("failed to embed messages", zap.Error(err))
+			continue
+		}
+
+		for i, message := range messages {
+			e.logger.Info("saving embedding", zap.String("text", message.Text))
+			_, err = message.Update().SetTextEmbedding(pgvectors.NewVector(embeddings[i])).Save(e.ctx)
 			if err != nil {
-				e.logger.Error("failed to query messages", zap.Error(err))
-				continue
-			}
-			e.logger.Info("fetched messages", zap.Int("count", len(messages)))
-			if len(messages) == 0 {
-				time.Sleep(5 * time.Second)
-				continue
-			}
-
-			messageTexts := lo.Map(messages, func(msg *ent.Message, _ int) string { return msg.Text })
-			embeddings, err := e.embeddingProvider.Embed(ctx, messageTexts)
-			if err != nil {
-				e.logger.Error("failed to embed messages", zap.Error(err))
-				continue
-			}
-
-			for i, message := range messages {
-				e.logger.Info("saving embedding", zap.String("text", message.Text))
-				_, err = message.Update().SetTextEmbedding(pgvectors.NewVector(embeddings[i])).Save(ctx)
-				if err != nil {
-					e.logger.Error("failed to save embedding", zap.Error(err))
-				}
+				e.logger.Error("failed to save embedding", zap.Error(err))
 			}
 		}
-	})
-
-	return g.Wait()
+	}
 }
 
 func (e *Embedding) Stop() {

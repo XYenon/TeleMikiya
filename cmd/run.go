@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -9,7 +8,6 @@ import (
 	"github.com/xyenon/telemikiya/telegram/bot"
 	"github.com/xyenon/telemikiya/telegram/observer"
 	"go.uber.org/fx"
-	"golang.org/x/sync/errgroup"
 )
 
 var enableObserver, enableEmbedding, enableBot bool
@@ -24,25 +22,17 @@ var runCmd = &cobra.Command{
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		fx.New(
-			fxOptions(),
-			fx.Invoke(func(o *observer.Observer, e *embedding.Embedding, b *bot.Bot) error {
-				ctx := context.Background()
-				g, ctx := errgroup.WithContext(ctx)
-
-				if enableObserver {
-					g.Go(func() error { return o.Run() })
-				}
-				if enableEmbedding {
-					g.Go(func() error { return e.Run() })
-				}
-				if enableBot {
-					g.Go(func() error { return b.Run() })
-				}
-
-				return g.Wait()
-			}),
-		).Run()
+		opts := []fx.Option{fxOptions()}
+		if enableObserver {
+			opts = append(opts, fx.Invoke(func(*observer.Observer) {}))
+		}
+		if enableEmbedding {
+			opts = append(opts, fx.Invoke(func(*embedding.Embedding) {}))
+		}
+		if enableBot {
+			opts = append(opts, fx.Invoke(func(*bot.Bot) {}))
+		}
+		fx.New(opts...).Run()
 	},
 }
 

@@ -43,6 +43,10 @@ func New(params Params) *Observer {
 
 	if params.LifeCycle != nil {
 		params.LifeCycle.Append(fx.Hook{
+			OnStart: func(ctx context.Context) error {
+				go observer.Run()
+				return nil
+			},
 			OnStop: func(ctx context.Context) error {
 				observer.Stop()
 				return nil

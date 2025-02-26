@@ -45,6 +45,10 @@ func New(params Params) *Bot {
 
 	if params.LifeCycle != nil {
 		params.LifeCycle.Append(fx.Hook{
+			OnStart: func(ctx context.Context) error {
+				go bot.Run()
+				return nil
+			},
 			OnStop: func(ctx context.Context) error {
 				bot.Stop()
 				return nil
