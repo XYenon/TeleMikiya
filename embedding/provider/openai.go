@@ -66,6 +66,10 @@ func (o OpenAI) Embed(ctx context.Context, inputs []string) ([][]float32, error)
 	return embeddings, nil
 }
 
+func (o OpenAI) Close() error {
+	return nil
+}
+
 func init() {
 	RegisterProvider(types.TypeOpenAI, NewOpenAI)
 }

@@ -47,6 +47,10 @@ func (o Ollama) Embed(ctx context.Context, inputs []string) ([][]float32, error)
 	return resp.Embeddings, nil
 }
 
+func (o Ollama) Close() error {
+	return nil
+}
+
 func init() {
 	RegisterProvider(types.TypeOllama, NewOllama)
 }

@@ -109,5 +109,8 @@ func (e *Embedding) Run() error {
 
 func (e *Embedding) Stop() {
 	e.cancel()
+	if err := e.embeddingProvider.Close(); err != nil {
+		e.logger.Error("failed to close embedding provider", zap.Error(err))
+	}
 	e.logger.Info("embedding service has been stopped")
 }

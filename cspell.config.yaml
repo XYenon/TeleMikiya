@@ -18,6 +18,7 @@ words:
   - entsql
   - errgroup
   - fxevent
+  - genai
   - Gigagroup
   - glebarez
   - gotd

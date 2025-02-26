@@ -34,7 +34,7 @@ password = "telemikiya"
 db_name = "telemikiya"
 
 [embedding]
-# Embedding provider: "ollama" or "openai"
+# Embedding provider: "ollama", "openai", or "google"
 provider = "ollama"
 # Embedding service API endpoint
 base_url = "http://localhost:11434"
@@ -62,3 +62,10 @@ api_key = ""
 organization = ""
 # OpenAI project (optional)
 project = ""
+
+# Google specific settings
+[embedding.google]
+# Google API key
+api_key = ""
+# Google quota project ID (optional)
+quota_project = ""

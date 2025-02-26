@@ -11,12 +11,14 @@ import (
 
 type Provider interface {
 	Embed(ctx context.Context, inputs []string) ([][]float32, error)
+	Close() error
 }
 
 type Params struct {
 	fx.In
 
-	Config *config.Config
+	LifeCycle fx.Lifecycle
+	Config    *config.Config
 }
 
 func New(params Params) (Provider, error) {
@@ -24,8 +26,20 @@ func New(params Params) (Provider, error) {
 	if !ok {
 		return nil, fmt.Errorf("unknown provider: %s", params.Config.Embedding.Provider)
 	}
+	p, err := newProvider(&params.Config.Embedding)
+	if err != nil {
+		return nil, err
+	}
 
-	return newProvider(&params.Config.Embedding)
+	if params.LifeCycle != nil {
+		params.LifeCycle.Append(fx.Hook{
+			OnStop: func(ctx context.Context) error {
+				return p.Close()
+			},
+		})
+	}
+
+	return p, nil
 }
 
 type newProviderFunc func(cfg *config.Embedding) (Provider, error)

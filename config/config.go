@@ -53,6 +53,7 @@ type Embedding struct {
 	Dimensions uint               `mapstructure:"dimensions"`
 	Ollama     Ollama             `mapstructure:"ollama"`
 	OpenAI     OpenAI             `mapstructure:"openai"`
+	Google     Google             `mapstructure:"google"`
 }
 
 type Ollama struct {
@@ -64,6 +65,11 @@ type OpenAI struct {
 	APIKey       string `mapstructure:"api_key"`
 	Organization string `mapstructure:"organization"`
 	Project      string `mapstructure:"project"`
+}
+
+type Google struct {
+	APIKey       string `mapstructure:"api_key"`
+	QuotaProject string `mapstructure:"quota_project"`
 }
 
 //go:embed config.default.toml
