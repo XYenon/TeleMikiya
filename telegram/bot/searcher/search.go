@@ -1,4 +1,4 @@
-package search
+package searcher
 
 import (
 	"fmt"
@@ -7,33 +7,27 @@ import (
 	"github.com/celestix/gotgproto/ext"
 	"github.com/gotd/td/telegram/message/styling"
 	"github.com/samber/lo"
-	"github.com/xyenon/telemikiya/config"
 	"github.com/xyenon/telemikiya/database/ent"
 	"github.com/xyenon/telemikiya/libs"
 	"github.com/xyenon/telemikiya/searcher"
-	"github.com/xyenon/telemikiya/types"
 	"go.uber.org/zap"
 )
 
-func Search(ctx *ext.Context, update *ext.Update) error {
-	logger := ctx.Value(types.CtxKeyLogger{}).(*zap.Logger)
-	cfg := ctx.Value(types.CtxKeyConfigTelegram{}).(*config.Telegram)
-	s := ctx.Value(types.CtxKeySearcher{}).(*searcher.Searcher)
-
+func (s Searcher) search(ctx *ext.Context, update *ext.Update) error {
 	userID := update.EffectiveUser().GetID()
-	if !lo.Contains(cfg.BotAllowedUserIDs, userID) {
+	if !lo.Contains(s.cfg.BotAllowedUserIDs, userID) {
 		return fmt.Errorf("user %d is not allowed to use this bot", userID)
 	}
 
 	input := strings.TrimPrefix(update.EffectiveMessage.Text, "/search")
 	input = strings.TrimSpace(input)
-	logger.Info("searching messages", zap.String("text", input))
+	s.logger.Info("searching messages", zap.String("text", input))
 
 	params := searcher.SearchParams{
 		Input: input,
 		Count: 10,
 	}
-	messages, err := s.Search(ctx, params)
+	messages, err := s.searcher.Search(ctx, params)
 	if err != nil {
 		return fmt.Errorf("failed to search messages: %w", err)
 	}

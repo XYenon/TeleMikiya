@@ -11,6 +11,7 @@ words:
   - celestix
   - ctid
   - dbname
+  - Dialector
   - entdialog
   - entgo
   - entmessage
@@ -21,6 +22,7 @@ words:
   - genai
   - Gigagroup
   - glebarez
+  - gorm
   - gotd
   - gotgproto
   - gotools
@@ -38,6 +40,7 @@ words:
   - tableoid
   - tdconstant
   - telemikiya
+  - tgbotsearcher
   - tgtypes
   - treefmt
   - Vcard

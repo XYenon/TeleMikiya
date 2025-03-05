@@ -10,8 +10,9 @@ import (
 	"github.com/xyenon/telemikiya/embedding/provider"
 	"github.com/xyenon/telemikiya/libs"
 	"github.com/xyenon/telemikiya/searcher"
-	"github.com/xyenon/telemikiya/telegram/bot"
-	"github.com/xyenon/telemikiya/telegram/observer"
+	"github.com/xyenon/telemikiya/telegram"
+	tgbotsearcher "github.com/xyenon/telemikiya/telegram/bot/searcher"
+	"github.com/xyenon/telemikiya/telegram/user/observer"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
 	"go.uber.org/zap"
@@ -53,9 +54,13 @@ func fxOptions() fx.Option {
 		fx.Provide(database.New),
 		fx.Provide(provider.New),
 		fx.Provide(searcher.New),
-		fx.Provide(observer.New),
 		fx.Provide(embedding.New),
-		fx.Provide(bot.New),
+		fx.Provide(
+			observer.New,
+			tgbotsearcher.New,
+			fx.Annotate(telegram.NewUser, fx.ResultTags(`name:"tg_user"`)),
+			fx.Annotate(telegram.NewBot, fx.ResultTags(`name:"tg_bot"`)),
+		),
 	)
 
 	if debug {
