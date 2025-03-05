@@ -19,7 +19,7 @@ type Params struct {
 	LifeCycle fx.Lifecycle
 	Config    *config.Config
 	Logger    *zap.Logger
-	Telegram  *telegram.Telegram `name:"tg_user"`
+	Telegram  *telegram.Telegram `name:"tgUser"`
 	DataBase  *database.Database
 }
 

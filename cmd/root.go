@@ -58,8 +58,8 @@ func fxOptions() fx.Option {
 		fx.Provide(
 			observer.New,
 			tgbotsearcher.New,
-			fx.Annotate(telegram.NewUser, fx.ResultTags(`name:"tg_user"`)),
-			fx.Annotate(telegram.NewBot, fx.ResultTags(`name:"tg_bot"`)),
+			fx.Annotate(telegram.NewUser, fx.ResultTags(`name:"tgUser"`)),
+			fx.Annotate(telegram.NewBot, fx.ResultTags(`name:"tgBot"`)),
 		),
 	)
 

@@ -29,7 +29,7 @@ type Params struct {
 	Config              *config.Config
 	Logger              *zap.Logger
 	Debug               bool `name:"debug" optional:"true"`
-	AllowClearEmbedding bool `name:"allow_clear_embedding" optional:"true"`
+	AllowClearEmbedding bool `name:"allowClearEmbedding" optional:"true"`
 }
 
 type Database struct {

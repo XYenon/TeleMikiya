@@ -16,7 +16,7 @@ var dbMigrateCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		app := fx.New(
 			fxOptions(),
-			fx.Supply(fx.Annotate(allowClearEmbedding, fx.ResultTags(`name:"allow_clear_embedding"`))),
+			fx.Supply(fx.Annotate(allowClearEmbedding, fx.ResultTags(`name:"allowClearEmbedding"`))),
 			fx.Invoke(func(db *database.Database) error {
 				return db.Migrate(context.Background())
 			}),
