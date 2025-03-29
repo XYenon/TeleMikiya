@@ -6,6 +6,7 @@ import (
 
 	"github.com/openai/openai-go"
 	"github.com/openai/openai-go/option"
+	"github.com/openai/openai-go/packages/param"
 	"github.com/samber/lo"
 	"github.com/xyenon/telemikiya/config"
 	"github.com/xyenon/telemikiya/types"
@@ -37,7 +38,7 @@ func NewOpenAI(cfg *config.Embedding) (Provider, error) {
 
 	client := openai.NewClient(opts...)
 	o := &OpenAI{
-		client: client,
+		client: &client,
 		cfg:    cfg,
 	}
 
@@ -46,10 +47,10 @@ func NewOpenAI(cfg *config.Embedding) (Provider, error) {
 
 func (o OpenAI) Embed(ctx context.Context, inputs []string) ([][]float32, error) {
 	body := openai.EmbeddingNewParams{
-		Input:          openai.F(openai.EmbeddingNewParamsInputUnion(openai.EmbeddingNewParamsInputArrayOfStrings(inputs))),
-		Model:          openai.F(o.cfg.Model),
-		Dimensions:     openai.F(int64(o.cfg.Dimensions)),
-		EncodingFormat: openai.F(openai.EmbeddingNewParamsEncodingFormatFloat),
+		Input:          openai.EmbeddingNewParamsInputUnion{OfArrayOfStrings: inputs},
+		Model:          o.cfg.Model,
+		Dimensions:     param.NewOpt(int64(o.cfg.Dimensions)),
+		EncodingFormat: openai.EmbeddingNewParamsEncodingFormatFloat,
 	}
 	resp, err := o.client.Embeddings.New(ctx, body)
 	if err != nil {
