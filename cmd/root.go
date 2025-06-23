@@ -7,12 +7,14 @@ import (
 	"github.com/xyenon/telemikiya/config"
 	"github.com/xyenon/telemikiya/database"
 	"github.com/xyenon/telemikiya/embedding"
-	"github.com/xyenon/telemikiya/embedding/provider"
 	"github.com/xyenon/telemikiya/libs"
+	"github.com/xyenon/telemikiya/provider"
 	"github.com/xyenon/telemikiya/searcher"
-	"github.com/xyenon/telemikiya/telegram"
-	tgbotsearcher "github.com/xyenon/telemikiya/telegram/bot/searcher"
-	"github.com/xyenon/telemikiya/telegram/user/observer"
+	tgbot "github.com/xyenon/telemikiya/telegram/bot"
+	tgbotsearch "github.com/xyenon/telemikiya/telegram/bot/search"
+	tgbotsticker "github.com/xyenon/telemikiya/telegram/bot/sticker"
+	tguser "github.com/xyenon/telemikiya/telegram/user"
+	tguserobserver "github.com/xyenon/telemikiya/telegram/user/observer"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
 	"go.uber.org/zap"
@@ -52,14 +54,15 @@ func fxOptions() fx.Option {
 			logger.Debug("config loaded", zap.Reflect("config", cfg))
 		}),
 		fx.Provide(database.New),
-		fx.Provide(provider.New),
+		fx.Provide(provider.NewEmbeddingProvider, provider.NewImageToTextProvider),
 		fx.Provide(searcher.New),
 		fx.Provide(embedding.New),
 		fx.Provide(
-			observer.New,
-			tgbotsearcher.New,
-			fx.Annotate(telegram.NewUser, fx.ResultTags(`name:"tgUser"`)),
-			fx.Annotate(telegram.NewBot, fx.ResultTags(`name:"tgBot"`)),
+			tguser.New,
+			tgbot.New,
+			tguserobserver.New,
+			tgbotsearch.New,
+			tgbotsticker.New,
 		),
 	)
 

@@ -30,7 +30,7 @@ TeleMikiya is a hybrid message search tool for Telegram that combines semantic s
 # - $XDG_CONFIG_HOME/telemikiya/config.toml
 # - /etc/telemikiya/config.toml
 cp config.example.toml config.toml
-  ```
+```
 
 2. Edit the configuration file with required settings:
 

@@ -33,39 +33,87 @@ password = "telemikiya"
 # PostgreSQL database name
 db_name = "telemikiya"
 
-[embedding]
-# Embedding provider: "ollama", "openai", or "google"
-provider = "ollama"
-# Embedding service API endpoint
+# Ollama specific settings
+[llm_provider.ollama]
+# Ollama API base URL
 base_url = "http://localhost:11434"
 # Request timeout duration (optional)
 timeout = "30s"
-# Batch size (number of messages to process per batch)
-batch_size = 10
+# API connection keep-alive duration (optional)
+keep_alive = "5m"
+
+# Ollama embedding model settings
+[llm_provider.ollama.embedding]
 # Embedding model name
 model = "snowflake-arctic-embed2:568m"
+# Model parameters (optional)
+model_parameters = {}
 # Embedding vector dimensions
 dimensions = 1024
 
-# Ollama specific settings
-[embedding.ollama]
-# API connection keep-alive duration (optional)
-keep_alive = "5m"
+# Ollama image to text model settings
+[llm_provider.ollama.image_to_text]
+# Image to text model name
+model = ""
 # Model parameters (optional)
 model_parameters = {}
 
 # OpenAI specific settings
-[embedding.openai]
+[llm_provider.openai]
+# OpenAI API base URL (leave empty for default)
+base_url = ""
 # OpenAI API key
 api_key = ""
+# Request timeout duration (optional)
+timeout = "30s"
 # OpenAI organization ID (optional)
 organization = ""
 # OpenAI project (optional)
 project = ""
 
+# OpenAI embedding model settings
+[llm_provider.openai.embedding]
+# Embedding model name
+model = "text-embedding-ada-002"
+# Embedding vector dimensions
+dimensions = 1536
+
+# OpenAI image to text model settings
+[llm_provider.openai.image_to_text]
+# Image to text model name
+model = ""
+
 # Google specific settings
-[embedding.google]
+[llm_provider.google]
+# Google API base URL (leave empty for default)
+base_url = ""
 # Google API key
 api_key = ""
+# Request timeout duration (optional)
+timeout = "30s"
 # Google quota project ID (optional)
 quota_project = ""
+
+# Google embedding model settings
+[llm_provider.google.embedding]
+# Embedding model name
+model = ""
+# Model parameters (optional)
+model_parameters = {}
+# Embedding vector dimensions
+dimensions = 0
+
+# Google image to text model settings
+[llm_provider.google.image_to_text]
+# Image to text model name
+model = ""
+
+[embedding]
+# Embedding provider: "ollama", "openai", or "google"
+provider = "ollama"
+# Batch size (number of messages to process per batch)
+batch_size = 10
+
+[image_to_text]
+# Image to text provider: "ollama", "openai", or "google"
+provider = "ollama"

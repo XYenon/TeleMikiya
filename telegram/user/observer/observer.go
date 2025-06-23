@@ -8,7 +8,7 @@ import (
 	"github.com/celestix/gotgproto/dispatcher/handlers/filters"
 	"github.com/xyenon/telemikiya/config"
 	"github.com/xyenon/telemikiya/database"
-	"github.com/xyenon/telemikiya/telegram"
+	tguser "github.com/xyenon/telemikiya/telegram/user"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
@@ -19,14 +19,14 @@ type Params struct {
 	LifeCycle fx.Lifecycle
 	Config    *config.Config
 	Logger    *zap.Logger
-	Telegram  *telegram.Telegram `name:"tgUser"`
+	Telegram  *tguser.TelegramUser
 	DataBase  *database.Database
 }
 
 type Observer struct {
 	cfg    *config.Telegram
 	logger *zap.Logger
-	tg     *telegram.Telegram
+	tg     *tguser.TelegramUser
 	db     *database.Database
 
 	dialogLock *sync.Map

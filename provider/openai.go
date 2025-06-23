@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 
 	"github.com/openai/openai-go"
@@ -14,18 +15,18 @@ import (
 
 type OpenAI struct {
 	client *openai.Client
-	cfg    *config.Embedding
+	cfg    *config.LLMProviderOpenAI
 }
 
 var _ Provider = (*OpenAI)(nil)
 
-func NewOpenAI(cfg *config.Embedding) (Provider, error) {
+func NewOpenAI(cfg *config.LLMProvider) (Provider, error) {
 	opts := []option.RequestOption{
 		option.WithAPIKey(cfg.OpenAI.APIKey),
-		option.WithRequestTimeout(cfg.Timeout),
+		option.WithRequestTimeout(cfg.OpenAI.Timeout),
 	}
-	if lo.IsNotEmpty(cfg.BaseURL) {
-		opts = append(opts, option.WithBaseURL(cfg.BaseURL))
+	if lo.IsNotEmpty(cfg.OpenAI.BaseURL) {
+		opts = append(opts, option.WithBaseURL(cfg.OpenAI.BaseURL))
 	} else {
 		opts = append(opts, option.WithEnvironmentProduction())
 	}
@@ -39,7 +40,7 @@ func NewOpenAI(cfg *config.Embedding) (Provider, error) {
 	client := openai.NewClient(opts...)
 	o := &OpenAI{
 		client: &client,
-		cfg:    cfg,
+		cfg:    &cfg.OpenAI,
 	}
 
 	return o, nil
@@ -48,8 +49,8 @@ func NewOpenAI(cfg *config.Embedding) (Provider, error) {
 func (o OpenAI) Embed(ctx context.Context, inputs []string) ([][]float32, error) {
 	body := openai.EmbeddingNewParams{
 		Input:          openai.EmbeddingNewParamsInputUnion{OfArrayOfStrings: inputs},
-		Model:          o.cfg.Model,
-		Dimensions:     param.NewOpt(int64(o.cfg.Dimensions)),
+		Model:          o.cfg.Embedding.Model,
+		Dimensions:     param.NewOpt(int64(o.cfg.Embedding.Dimensions)),
 		EncodingFormat: openai.EmbeddingNewParamsEncodingFormatFloat,
 	}
 	resp, err := o.client.Embeddings.New(ctx, body)
@@ -65,6 +66,26 @@ func (o OpenAI) Embed(ctx context.Context, inputs []string) ([][]float32, error)
 		)
 	}
 	return embeddings, nil
+}
+
+func (o OpenAI) ImageToText(ctx context.Context, mimeType string, image []byte) (string, error) {
+	base64Image := base64.StdEncoding.EncodeToString(image)
+	body := openai.ChatCompletionNewParams{
+		Messages: []openai.ChatCompletionMessageParamUnion{
+			openai.SystemMessage(imageToTextPrompt),
+			openai.UserMessage([]openai.ChatCompletionContentPartUnionParam{
+				openai.ImageContentPart(openai.ChatCompletionContentPartImageImageURLParam{
+					URL: fmt.Sprintf("data:%s;base64,%s", mimeType, base64Image),
+				}),
+			}),
+		},
+		Model: o.cfg.ImageToText.Model,
+	}
+	resp, err := o.client.Chat.Completions.New(ctx, body)
+	if err != nil {
+		return "", fmt.Errorf("failed to completion: %w", err)
+	}
+	return resp.Choices[0].Message.Content, nil
 }
 
 func (o OpenAI) Close() error {

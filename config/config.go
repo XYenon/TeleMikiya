@@ -15,9 +15,11 @@ import (
 )
 
 type Config struct {
-	Telegram  Telegram  `mapstructure:"telegram"`
-	Database  Database  `mapstructure:"database"`
-	Embedding Embedding `mapstructure:"embedding"`
+	Telegram    Telegram    `mapstructure:"telegram"`
+	Database    Database    `mapstructure:"database"`
+	LLMProvider LLMProvider `mapstructure:"llm_provider"`
+	Embedding   Embedding   `mapstructure:"embedding"`
+	ImageToText ImageToText `mapstructure:"image_to_text"`
 }
 
 type Telegram struct {
@@ -44,32 +46,71 @@ type Database struct {
 	DBName         string        `mapstructure:"db_name"`
 }
 
-type Embedding struct {
-	Provider   types.ProviderType `mapstructure:"provider"`
-	BaseURL    string             `mapstructure:"base_url"`
-	Timeout    time.Duration      `mapstructure:"timeout"`
-	BatchSize  uint               `mapstructure:"batch_size"`
-	Model      string             `mapstructure:"model"`
-	Dimensions uint               `mapstructure:"dimensions"`
-	Ollama     Ollama             `mapstructure:"ollama"`
-	OpenAI     OpenAI             `mapstructure:"openai"`
-	Google     Google             `mapstructure:"google"`
+type LLMProvider struct {
+	Ollama LLMProviderOllama `mapstructure:"ollama"`
+	OpenAI LLMProviderOpenAI `mapstructure:"openai"`
+	Google LLMProviderGoogle `mapstructure:"google"`
 }
 
-type Ollama struct {
-	KeepAlive       time.Duration  `mapstructure:"keep_alive"`
+func (p LLMProvider) Embedding(provider types.ProviderType) LLMProviderEmbedding {
+	switch provider {
+	case types.TypeOllama:
+		return p.Ollama.Embedding
+	case types.TypeOpenAI:
+		return p.OpenAI.Embedding
+	case types.TypeGoogle:
+		return p.Google.Embedding
+	default:
+		return LLMProviderEmbedding{}
+	}
+}
+
+type LLMProviderCommon struct {
+	BaseURL string        `mapstructure:"base_url"`
+	APIKey  string        `mapstructure:"api_key"`
+	Timeout time.Duration `mapstructure:"timeout"`
+}
+
+type LLMProviderEmbedding struct {
+	Model           string         `mapstructure:"model"`
+	ModelParameters map[string]any `mapstructure:"model_parameters"`
+	Dimensions      uint           `mapstructure:"dimensions"`
+}
+
+type LLMProviderImageToText struct {
+	Model           string         `mapstructure:"model"`
 	ModelParameters map[string]any `mapstructure:"model_parameters"`
 }
 
-type OpenAI struct {
-	APIKey       string `mapstructure:"api_key"`
-	Organization string `mapstructure:"organization"`
-	Project      string `mapstructure:"project"`
+type LLMProviderOllama struct {
+	LLMProviderCommon `mapstructure:",squash"`
+	Embedding         LLMProviderEmbedding   `mapstructure:"embedding"`
+	ImageToText       LLMProviderImageToText `mapstructure:"image_to_text"`
+	KeepAlive         time.Duration          `mapstructure:"keep_alive"`
 }
 
-type Google struct {
-	APIKey       string `mapstructure:"api_key"`
-	QuotaProject string `mapstructure:"quota_project"`
+type LLMProviderOpenAI struct {
+	LLMProviderCommon `mapstructure:",squash"`
+	Embedding         LLMProviderEmbedding   `mapstructure:"embedding"`
+	ImageToText       LLMProviderImageToText `mapstructure:"image_to_text"`
+	Organization      string                 `mapstructure:"organization"`
+	Project           string                 `mapstructure:"project"`
+}
+
+type LLMProviderGoogle struct {
+	LLMProviderCommon `mapstructure:",squash"`
+	Embedding         LLMProviderEmbedding   `mapstructure:"embedding"`
+	ImageToText       LLMProviderImageToText `mapstructure:"image_to_text"`
+	QuotaProject      string                 `mapstructure:"quota_project"`
+}
+
+type Embedding struct {
+	Provider  types.ProviderType `mapstructure:"provider"`
+	BatchSize uint               `mapstructure:"batch_size"`
+}
+
+type ImageToText struct {
+	Provider types.ProviderType `mapstructure:"provider"`
 }
 
 //go:embed config.default.toml

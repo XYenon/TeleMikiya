@@ -52,7 +52,7 @@
             pname = "telemikiya";
             inherit version;
             src = ./.;
-            vendorHash = "sha256-pMhdFs8KVqULfG3Ry8v1/o1tgflpxcw2ntJXE92ep/s=";
+            vendorHash = "sha256-0sEYwDcQwvT916gmD+2Ycc7hMKJFgwr1DShBVqfbh0c=";
             subPackages = [ "." ];
           };
       }

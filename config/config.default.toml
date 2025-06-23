@@ -16,23 +16,50 @@ user = "telemikiya"
 password = ""
 db_name = "telemikiya"
 
-[embedding]
-provider = "ollama"
+[llm_provider.ollama]
 base_url = "http://localhost:11434"
 timeout = 0
-batch_size = 10
+keep_alive = 0
+
+[llm_provider.ollama.embedding]
 model = ""
+model_parameters = {}
 dimensions = 0
 
-[embedding.ollama]
-keep_alive = 0
+[llm_provider.ollama.image_to_text]
+model = ""
 model_parameters = {}
 
-[embedding.openai]
+[llm_provider.openai]
+base_url = ""
 api_key = ""
+timeout = 0
 organization = ""
 project = ""
 
-[embedding.google]
+[llm_provider.openai.embedding]
+model = ""
+dimensions = 0
+
+[llm_provider.openai.image_to_text]
+model = ""
+
+[llm_provider.google]
+base_url = ""
 api_key = ""
+timeout = 0
 quota_project = ""
+
+[llm_provider.google.embedding]
+model = ""
+dimensions = 0
+
+[llm_provider.google.image_to_text]
+model = ""
+
+[embedding]
+provider = "ollama"
+batch_size = 10
+
+[image_to_text]
+provider = "ollama"

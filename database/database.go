@@ -72,7 +72,7 @@ func New(params Params) (*Database, error) {
 	}
 
 	db := &Database{
-		embeddingDimensions: params.Config.Embedding.Dimensions,
+		embeddingDimensions: params.Config.LLMProvider.Embedding(params.Config.Embedding.Provider).Dimensions,
 		allowClearEmbedding: params.AllowClearEmbedding,
 		logger:              params.Logger,
 		UserSessionConn:     userSessionConn,

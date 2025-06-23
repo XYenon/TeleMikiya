@@ -5,7 +5,8 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/xyenon/telemikiya/embedding"
-	tgbotsearcher "github.com/xyenon/telemikiya/telegram/bot/searcher"
+	tgbotsearcher "github.com/xyenon/telemikiya/telegram/bot/search"
+	tgbotsticker "github.com/xyenon/telemikiya/telegram/bot/sticker"
 	"github.com/xyenon/telemikiya/telegram/user/observer"
 	"go.uber.org/fx"
 )
@@ -30,7 +31,7 @@ var runCmd = &cobra.Command{
 			opts = append(opts, fx.Invoke(func(*embedding.Embedding) {}))
 		}
 		if enableBot {
-			opts = append(opts, fx.Invoke(func(*tgbotsearcher.Searcher) {}))
+			opts = append(opts, fx.Invoke(func(*tgbotsearcher.Search) {}), fx.Invoke(func(*tgbotsticker.Sticker) {}))
 		}
 		fx.New(opts...).Run()
 	},

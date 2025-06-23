@@ -15,7 +15,7 @@ import (
 	"github.com/xyenon/telemikiya/database"
 	"github.com/xyenon/telemikiya/database/ent"
 	entmessage "github.com/xyenon/telemikiya/database/ent/message"
-	"github.com/xyenon/telemikiya/embedding/provider"
+	"github.com/xyenon/telemikiya/provider"
 	"go.uber.org/fx"
 )
 
@@ -23,13 +23,13 @@ type Params struct {
 	fx.In
 
 	Database          *database.Database
-	EmbeddingProvider provider.Provider
+	EmbeddingProvider provider.EmbeddingProvider
 	Config            *config.Config
 }
 
 type Searcher struct {
 	db                *database.Database
-	embeddingProvider provider.Provider
+	embeddingProvider provider.EmbeddingProvider
 	cfg               *config.Config
 }
 
