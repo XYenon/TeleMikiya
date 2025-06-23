@@ -9,8 +9,8 @@ import (
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
+	"github.com/pgvector/pgvector-go"
 	"github.com/samber/lo"
-	"github.com/xyenon/pgvectors-go"
 	"github.com/xyenon/telemikiya/config"
 	"github.com/xyenon/telemikiya/database"
 	"github.com/xyenon/telemikiya/database/ent"
@@ -58,7 +58,7 @@ func (s Searcher) Search(ctx context.Context, params SearchParams) ([]*ent.Messa
 	if err != nil {
 		return nil, fmt.Errorf("failed to embed messages: %w", err)
 	}
-	vector := pgvectors.NewVector(embeddings[0])
+	vector := pgvector.NewVector(embeddings[0])
 
 	semanticSearch, fullTextSearch := "semantic_search", "full_text_search"
 	fieldRank := "rank"

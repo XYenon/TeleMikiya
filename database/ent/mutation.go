@@ -12,7 +12,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
-	pgvectors "github.com/xyenon/pgvectors-go"
+	pgvector "github.com/pgvector/pgvector-go"
 	"github.com/xyenon/telemikiya/database/ent/dialog"
 	"github.com/xyenon/telemikiya/database/ent/message"
 	"github.com/xyenon/telemikiya/database/ent/predicate"
@@ -574,7 +574,7 @@ type MessageMutation struct {
 	msg_id         *int
 	addmsg_id      *int
 	text           *string
-	text_embedding *pgvectors.Vector
+	text_embedding *pgvector.Vector
 	has_media      *bool
 	media_info     **types.MediaInfo
 	sent_at        *time.Time
@@ -819,12 +819,12 @@ func (m *MessageMutation) ResetText() {
 }
 
 // SetTextEmbedding sets the "text_embedding" field.
-func (m *MessageMutation) SetTextEmbedding(pg pgvectors.Vector) {
+func (m *MessageMutation) SetTextEmbedding(pg pgvector.Vector) {
 	m.text_embedding = &pg
 }
 
 // TextEmbedding returns the value of the "text_embedding" field in the mutation.
-func (m *MessageMutation) TextEmbedding() (r pgvectors.Vector, exists bool) {
+func (m *MessageMutation) TextEmbedding() (r pgvector.Vector, exists bool) {
 	v := m.text_embedding
 	if v == nil {
 		return
@@ -835,7 +835,7 @@ func (m *MessageMutation) TextEmbedding() (r pgvectors.Vector, exists bool) {
 // OldTextEmbedding returns the old "text_embedding" field's value of the Message entity.
 // If the Message object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MessageMutation) OldTextEmbedding(ctx context.Context) (v pgvectors.Vector, err error) {
+func (m *MessageMutation) OldTextEmbedding(ctx context.Context) (v pgvector.Vector, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldTextEmbedding is only allowed on UpdateOne operations")
 	}
@@ -1134,7 +1134,7 @@ func (m *MessageMutation) SetField(name string, value ent.Value) error {
 		m.SetText(v)
 		return nil
 	case message.FieldTextEmbedding:
-		v, ok := value.(pgvectors.Vector)
+		v, ok := value.(pgvector.Vector)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

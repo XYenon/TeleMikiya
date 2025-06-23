@@ -16,7 +16,7 @@ TeleMikiya is a hybrid message search tool for Telegram that combines semantic s
 ## Requirements
 
 - PostgreSQL 15+ with:
-  - [pgvecto.rs](https://github.com/tensorchord/pgvecto.rs) extension for vector similarity search
+  - [VectorChord](https://docs.vectorchord.ai/) extension for vector similarity search
   - [PGroonga](https://pgroonga.github.io/) extension for full-text search
 - Either [Ollama](https://ollama.ai/) or OpenAI API access
 
@@ -42,7 +42,7 @@ cp config.example.toml config.toml
 
 1. Install required PostgreSQL extensions:
 
-- Install pgvecto.rs following the [official installation guide](https://docs.vectorchord.ai/getting-started/installation.html)
+- Install VectorChord following the [official installation guide](https://docs.vectorchord.ai/vectorchord/getting-started/installation.html)
 - Install PGroonga following the [official installation guide](https://pgroonga.github.io/install/)
 
 2. Create database and user:
@@ -61,15 +61,12 @@ CREATE DATABASE telemikiya OWNER telemikiya;
 \c telemikiya
 
 -- Create extensions
-CREATE EXTENSION IF NOT EXISTS vectors;
+CREATE EXTENSION IF NOT EXISTS vchord CASCADE;
 CREATE EXTENSION IF NOT EXISTS pgroonga;
 
 -- Create schemas
 CREATE SCHEMA user_session AUTHORIZATION telemikiya;
 CREATE SCHEMA bot_session AUTHORIZATION telemikiya;
-
--- Grant permissions
-GRANT ALL ON SCHEMA vectors TO telemikiya;
 ```
 
 3. Migrate database schema:

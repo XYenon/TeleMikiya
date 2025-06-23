@@ -11,7 +11,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
-	pgvectors "github.com/xyenon/pgvectors-go"
+	pgvector "github.com/pgvector/pgvector-go"
 	"github.com/xyenon/telemikiya/database/ent/dialog"
 	"github.com/xyenon/telemikiya/database/ent/message"
 	"github.com/xyenon/telemikiya/types"
@@ -29,7 +29,7 @@ type Message struct {
 	// Text holds the value of the "text" field.
 	Text string `json:"text,omitempty"`
 	// TextEmbedding holds the value of the "text_embedding" field.
-	TextEmbedding pgvectors.Vector `json:"text_embedding,omitempty"`
+	TextEmbedding pgvector.Vector `json:"text_embedding,omitempty"`
 	// HasMedia holds the value of the "has_media" field.
 	HasMedia bool `json:"has_media,omitempty"`
 	// MediaInfo holds the value of the "media_info" field.
@@ -70,7 +70,7 @@ func (*Message) scanValues(columns []string) ([]any, error) {
 		case message.FieldMediaInfo:
 			values[i] = new([]byte)
 		case message.FieldTextEmbedding:
-			values[i] = new(pgvectors.Vector)
+			values[i] = new(pgvector.Vector)
 		case message.FieldHasMedia:
 			values[i] = new(sql.NullBool)
 		case message.FieldMsgID, message.FieldDialogID:
@@ -121,7 +121,7 @@ func (m *Message) assignValues(columns []string, values []any) error {
 				m.Text = value.String
 			}
 		case message.FieldTextEmbedding:
-			if value, ok := values[i].(*pgvectors.Vector); !ok {
+			if value, ok := values[i].(*pgvector.Vector); !ok {
 				return fmt.Errorf("unexpected type %T for field text_embedding", values[i])
 			} else if value != nil {
 				m.TextEmbedding = *value

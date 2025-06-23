@@ -8,7 +8,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/google/uuid"
-	pgvectors "github.com/xyenon/pgvectors-go"
+	pgvector "github.com/pgvector/pgvector-go"
 	"github.com/xyenon/telemikiya/database/ent/predicate"
 )
 
@@ -73,7 +73,7 @@ func Text(v string) predicate.Message {
 }
 
 // TextEmbedding applies equality check predicate on the "text_embedding" field. It's identical to TextEmbeddingEQ.
-func TextEmbedding(v pgvectors.Vector) predicate.Message {
+func TextEmbedding(v pgvector.Vector) predicate.Message {
 	return predicate.Message(sql.FieldEQ(FieldTextEmbedding, v))
 }
 
@@ -213,42 +213,42 @@ func TextContainsFold(v string) predicate.Message {
 }
 
 // TextEmbeddingEQ applies the EQ predicate on the "text_embedding" field.
-func TextEmbeddingEQ(v pgvectors.Vector) predicate.Message {
+func TextEmbeddingEQ(v pgvector.Vector) predicate.Message {
 	return predicate.Message(sql.FieldEQ(FieldTextEmbedding, v))
 }
 
 // TextEmbeddingNEQ applies the NEQ predicate on the "text_embedding" field.
-func TextEmbeddingNEQ(v pgvectors.Vector) predicate.Message {
+func TextEmbeddingNEQ(v pgvector.Vector) predicate.Message {
 	return predicate.Message(sql.FieldNEQ(FieldTextEmbedding, v))
 }
 
 // TextEmbeddingIn applies the In predicate on the "text_embedding" field.
-func TextEmbeddingIn(vs ...pgvectors.Vector) predicate.Message {
+func TextEmbeddingIn(vs ...pgvector.Vector) predicate.Message {
 	return predicate.Message(sql.FieldIn(FieldTextEmbedding, vs...))
 }
 
 // TextEmbeddingNotIn applies the NotIn predicate on the "text_embedding" field.
-func TextEmbeddingNotIn(vs ...pgvectors.Vector) predicate.Message {
+func TextEmbeddingNotIn(vs ...pgvector.Vector) predicate.Message {
 	return predicate.Message(sql.FieldNotIn(FieldTextEmbedding, vs...))
 }
 
 // TextEmbeddingGT applies the GT predicate on the "text_embedding" field.
-func TextEmbeddingGT(v pgvectors.Vector) predicate.Message {
+func TextEmbeddingGT(v pgvector.Vector) predicate.Message {
 	return predicate.Message(sql.FieldGT(FieldTextEmbedding, v))
 }
 
 // TextEmbeddingGTE applies the GTE predicate on the "text_embedding" field.
-func TextEmbeddingGTE(v pgvectors.Vector) predicate.Message {
+func TextEmbeddingGTE(v pgvector.Vector) predicate.Message {
 	return predicate.Message(sql.FieldGTE(FieldTextEmbedding, v))
 }
 
 // TextEmbeddingLT applies the LT predicate on the "text_embedding" field.
-func TextEmbeddingLT(v pgvectors.Vector) predicate.Message {
+func TextEmbeddingLT(v pgvector.Vector) predicate.Message {
 	return predicate.Message(sql.FieldLT(FieldTextEmbedding, v))
 }
 
 // TextEmbeddingLTE applies the LTE predicate on the "text_embedding" field.
-func TextEmbeddingLTE(v pgvectors.Vector) predicate.Message {
+func TextEmbeddingLTE(v pgvector.Vector) predicate.Message {
 	return predicate.Message(sql.FieldLTE(FieldTextEmbedding, v))
 }
 

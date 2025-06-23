@@ -8,7 +8,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 	"github.com/google/uuid"
-	"github.com/xyenon/pgvectors-go"
+	"github.com/pgvector/pgvector-go"
 	"github.com/xyenon/telemikiya/types"
 )
 
@@ -25,7 +25,7 @@ func (Message) Fields() []ent.Field {
 		field.Int64("dialog_id"),
 		field.String("text").
 			SchemaType(map[string]string{dialect.Postgres: "text"}),
-		field.Other("text_embedding", pgvectors.Vector{}).
+		field.Other("text_embedding", pgvector.Vector{}).
 			SchemaType(map[string]string{dialect.Postgres: "vector(%d)"}).
 			Optional(),
 		field.Bool("has_media"),
@@ -41,8 +41,8 @@ func (Message) Indexes() []ent.Index {
 		index.Fields("text").Annotations(entsql.IndexType("pgroonga")),
 		index.Fields("text_embedding").
 			Annotations(
-				entsql.IndexType("vectors"),
-				entsql.OpClass("vectors.vector_cos_ops"),
+				entsql.IndexType("vchordrq"),
+				entsql.OpClass("vector_cosine_ops"),
 			),
 		index.Fields("sent_at"),
 	}

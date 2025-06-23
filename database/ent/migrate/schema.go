@@ -65,8 +65,8 @@ var (
 				Unique:  false,
 				Columns: []*schema.Column{MessagesColumns[3]},
 				Annotation: &entsql.IndexAnnotation{
-					OpClass: "vectors.vector_cos_ops",
-					Type:    "vectors",
+					OpClass: "vector_cosine_ops",
+					Type:    "vchordrq",
 				},
 			},
 			{

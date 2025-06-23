@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/pgvector/pgvector-go"
 	"github.com/samber/lo"
-	"github.com/xyenon/pgvectors-go"
 	"github.com/xyenon/telemikiya/config"
 	"github.com/xyenon/telemikiya/database"
 	"github.com/xyenon/telemikiya/database/ent"
@@ -95,7 +95,7 @@ func (e *Embedding) Run() {
 
 		for i, message := range messages {
 			e.logger.Info("saving embedding", zap.String("text", message.Text))
-			_, err = message.Update().SetTextEmbedding(pgvectors.NewVector(embeddings[i])).Save(e.ctx)
+			_, err = message.Update().SetTextEmbedding(pgvector.NewVector(embeddings[i])).Save(e.ctx)
 			if err != nil {
 				e.logger.Error("failed to save embedding", zap.Error(err))
 			}

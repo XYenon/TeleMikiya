@@ -11,7 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	pgvectors "github.com/xyenon/pgvectors-go"
+	pgvector "github.com/pgvector/pgvector-go"
 	"github.com/xyenon/telemikiya/database/ent/dialog"
 	"github.com/xyenon/telemikiya/database/ent/message"
 	"github.com/xyenon/telemikiya/database/ent/predicate"
@@ -82,13 +82,13 @@ func (mu *MessageUpdate) SetNillableText(s *string) *MessageUpdate {
 }
 
 // SetTextEmbedding sets the "text_embedding" field.
-func (mu *MessageUpdate) SetTextEmbedding(pg pgvectors.Vector) *MessageUpdate {
+func (mu *MessageUpdate) SetTextEmbedding(pg pgvector.Vector) *MessageUpdate {
 	mu.mutation.SetTextEmbedding(pg)
 	return mu
 }
 
 // SetNillableTextEmbedding sets the "text_embedding" field if the given value is not nil.
-func (mu *MessageUpdate) SetNillableTextEmbedding(pg *pgvectors.Vector) *MessageUpdate {
+func (mu *MessageUpdate) SetNillableTextEmbedding(pg *pgvector.Vector) *MessageUpdate {
 	if pg != nil {
 		mu.SetTextEmbedding(*pg)
 	}
@@ -329,13 +329,13 @@ func (muo *MessageUpdateOne) SetNillableText(s *string) *MessageUpdateOne {
 }
 
 // SetTextEmbedding sets the "text_embedding" field.
-func (muo *MessageUpdateOne) SetTextEmbedding(pg pgvectors.Vector) *MessageUpdateOne {
+func (muo *MessageUpdateOne) SetTextEmbedding(pg pgvector.Vector) *MessageUpdateOne {
 	muo.mutation.SetTextEmbedding(pg)
 	return muo
 }
 
 // SetNillableTextEmbedding sets the "text_embedding" field if the given value is not nil.
-func (muo *MessageUpdateOne) SetNillableTextEmbedding(pg *pgvectors.Vector) *MessageUpdateOne {
+func (muo *MessageUpdateOne) SetNillableTextEmbedding(pg *pgvector.Vector) *MessageUpdateOne {
 	if pg != nil {
 		muo.SetTextEmbedding(*pg)
 	}

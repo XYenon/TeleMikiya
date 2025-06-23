@@ -11,7 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	pgvectors "github.com/xyenon/pgvectors-go"
+	pgvector "github.com/pgvector/pgvector-go"
 	"github.com/xyenon/telemikiya/database/ent/dialog"
 	"github.com/xyenon/telemikiya/database/ent/message"
 	"github.com/xyenon/telemikiya/types"
@@ -43,13 +43,13 @@ func (mc *MessageCreate) SetText(s string) *MessageCreate {
 }
 
 // SetTextEmbedding sets the "text_embedding" field.
-func (mc *MessageCreate) SetTextEmbedding(pg pgvectors.Vector) *MessageCreate {
+func (mc *MessageCreate) SetTextEmbedding(pg pgvector.Vector) *MessageCreate {
 	mc.mutation.SetTextEmbedding(pg)
 	return mc
 }
 
 // SetNillableTextEmbedding sets the "text_embedding" field if the given value is not nil.
-func (mc *MessageCreate) SetNillableTextEmbedding(pg *pgvectors.Vector) *MessageCreate {
+func (mc *MessageCreate) SetNillableTextEmbedding(pg *pgvector.Vector) *MessageCreate {
 	if pg != nil {
 		mc.SetTextEmbedding(*pg)
 	}
